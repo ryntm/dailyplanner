@@ -1,93 +1,68 @@
 $(document).ready(function() {
 
-    var currentHour = moment().format('HH')
-    // var tasks = JSON.parse(localStorage.getItem("dailytasks"));
-    
-    // if (tasks == undefined) {
-    //     tasks = {
-    //         "9": "",
-    //         "10": "",
-    //         "11": "",
-    //         "12": "",
-    //         "13": "",
-    //         "14": "",
-    //         "15": "",
-    //         "16": "",
-    //         "17": "",
-    //     }
-    // }
+var currentHour = moment().format('HH')
+var currentDate = moment().format('ll');
+let tasks = {}
 
-    // console.log(tasks)
+//function to get the last saved date
+function getSavedDate() {
+    var savedDate = JSON.parse(localStorage.getItem('savedDate'));
+    if (savedDate === null) {
+        savedDate = currentDate
+        localStorage.setItem('savedDate', JSON.stringify(savedDate))
+    } else 
+    if (savedDate !== currentDate) {
+        savedDate = currentDate
+        localStorage.setItem('savedDate', JSON.stringify(savedDate))
+        tasks = 
+            {hour9: "",hour10: "",hour11: "",hour12: "",hour13: "",
+            hour14: "",hour15: "",hour16: "",hour17: ""}
+    }
+}
 
-    
-
-    $('.saveBtn').on('click', function(){
-        var time = $(this).siblings(".description").attr("id");
-        var task = $(this).siblings(".description").val().trim();
-        tasks[time] = task
-        localStorage.setItem(tasks, JSON.stringify(tasks));
-    })
-
-    function getTasks() {
-        var tasks = JSON.parse(localStorage.getItem("tasks"||'{}'));
-
-        if (tasks === null) {
-            tasks = 
-                    {hour9: "a",
-                    hour10: "b",
-                    hour11: "c",
-                    hour12: "d",
-                    hour13: "e",
-                    hour14: "f",
-                    hour15: "f",
-                    hour16: "g",
-                    hour17: "h"}
-            
-            localStorage.setItem('tasks', JSON.stringify(tasks))
+function getTasks() {
+    getSavedDate()
+    var tasks = JSON.parse(localStorage.getItem("tasks"||'{}'));
+    if (tasks === null) {
+        tasks = 
+                {hour9: "",hour10: "",hour11: "",hour12: "",hour13: "",
+                hour14: "",hour15: "",hour16: "",hour17: ""}
+        localStorage.setItem('tasks', JSON.stringify(tasks))
+    }
+    for (var i = 0; i < Object.keys(tasks).length; i++) {
+        var hourText = "";
+        var j = i+9
+        var hourID = "hour" + j
+        if (j > 12) {
+        hourText = j-12 + " PM"
+        } else if (j < 11) {
+        hourText = j + " AM"
+        } else {
+        hourText = j + " PM"
         }
+        var textAreas = `
+        <div class="time-block"> 
+            <div class="row">
+                <div class="hour">${hourText}</div>
+                <textarea class="description" id="${hourID}">${tasks[hourID]}</textarea>
+                <button class="saveBtn" id="${hourID}button">save</button>
+            </div>
+        </div>`
+        $(".container").append(textAreas)
+    }
+};
 
-        console.log(Object.keys(tasks).length)
-        console.log()
+getTasks();
 
-        for (var i = 0; i < Object.keys(tasks).length; i++) {
-           var hourText = "";
-           var j = i+9
-           var hourID = "hour" + j
-           console.log(tasks[hourID])
-           if (j > 12) {
-            hourText = j-12 + " PM"
-           } else if (j < 11) {
-            hourText = j + " AM"
-           } else {
-            hourText = j + " PM"
-           }
+// when the savebtn is clicked, it takes the text from the textarea
+// and then saves it in the array position of the textarea's id 
+$(".saveBtn").on('click', function() {
+    console.log(tasks)
+    tasks = JSON.parse(localStorage.getItem('tasks'));
+    var time = $(this).siblings(".description").attr("id");
+    var task = $(this).siblings(".description").val().trim();
+    tasks[time] = task
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+});
 
-            var textAreas = `
-           <div class="time-block"> 
-                <div class="row">
-                    <div class="hour">${hourText}</div>
-                    <textarea class="description" id="${hourID}">${tasks[hourID]}</textarea>
-                    <button class="saveBtn">save</button>
-                </div>
-            </div>`
-            $(".container").append(textAreas)
-        }
-
-        // showTasks();
-    };
-
-    // function showTasks () {
-    //     if (tasks !== null) {
-    //         for (var i = 0; i < tasks.length; i++) {
-    //             var j = i+9;
-    //         $("#"`${j}`).text(tasks[i]);
-    //         }
-    //     }
-    // }
-
-    //function for comparing the time so that we may color the planner based on the time. 
-
-
-    getTasks();
-
-})
+});
