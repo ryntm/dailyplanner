@@ -4,7 +4,7 @@ var currentHour = moment().format('HH')
 var currentDate = moment().format('ll');
 let tasks = {}
 
-//function to get the last saved date
+//function to getting and setting the last saved date, if date is not that same as before, reset array. 
 function getSavedDate() {
     var savedDate = JSON.parse(localStorage.getItem('savedDate'));
     if (savedDate === null) {
@@ -16,12 +16,17 @@ function getSavedDate() {
         localStorage.setItem('savedDate', JSON.stringify(savedDate))
         tasks = 
             {hour9: "",hour10: "",hour11: "",hour12: "",hour13: "",
-            hour14: "",hour15: "",hour16: "",hour17: ""}
+            hour14: "",hour15: "",hour16: "",hour17: ""};
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+
     }
 }
 
+// get tasks from localstorage and then setting them to textareas if tey exist. 
 function getTasks() {
     getSavedDate()
+
+    // getting or setting tasks array
     var tasks = JSON.parse(localStorage.getItem("tasks"||'{}'));
     if (tasks === null) {
         tasks = 
@@ -29,6 +34,8 @@ function getTasks() {
                 hour14: "",hour15: "",hour16: "",hour17: ""}
         localStorage.setItem('tasks', JSON.stringify(tasks))
     }
+
+    // looping through all necessary divs to display html
     for (var i = 0; i < Object.keys(tasks).length; i++) {
         var hourText = "";
         var j = i+9
@@ -40,12 +47,30 @@ function getTasks() {
         } else {
         hourText = j + " PM"
         }
+
+        // disable textarea it's id is less than the current time. 
+        var disableTextarea = "";
+        if (currentHour > j) {
+            disableTextarea = "disabled=\"disabled\""
+        }
+
+        // setting past/current/present state to the textarea to change color
+        var mcfly = "";
+        if (j > currentHour) {
+            mcfly = "future"
+        } else if (j < currentHour) { 
+            mcfly = "past"
+        } else {
+            mcfly = "present"
+        }
+
+        // string interpolation for each hour row
         var textAreas = `
         <div class="time-block"> 
             <div class="row">
                 <div class="hour">${hourText}</div>
-                <textarea class="description" id="${hourID}">${tasks[hourID]}</textarea>
-                <button class="saveBtn" id="${hourID}button">save</button>
+                <textarea class="description ${mcfly}" id="${hourID}" ${disableTextarea}>${tasks[hourID]}</textarea>
+                <button class="saveBtn" id="${hourID}button"><i class="fas fa-save icon-4x"></i></button>
             </div>
         </div>`
         $(".container").append(textAreas)
@@ -64,5 +89,7 @@ $(".saveBtn").on('click', function() {
     tasks[time] = task
     localStorage.setItem('tasks', JSON.stringify(tasks));
 });
+
+$('#currentDay').text(currentDate);
 
 });

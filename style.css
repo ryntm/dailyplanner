@@ -62,19 +62,29 @@ textarea{
 
 .future {
   background-color: #77dd77;
-  color: white;
+  color: black;
 }
 
 .saveBtn {
   border-left: 1px solid black;
-  border-top-right-radius: 15px;
-  border-bottom-right-radius: 15px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
   background-color: #06AED5;
   color: white;
+  font-size: 30px;
+  width: 75px;
 }
 
-.saveBtn i:hover {
-  font-size: 20px;
-  transition: all .3s ease-in-out;
+.saveBtn:hover {
+  background-color: #178bb8;
+  transition: all .1s ease-in-out;
 }
 
+.saveBtn:active {
+  background-color: #05ff0f;
+  transition: all 0.1s ease-in-out;
+}
+
+#currentDay {
+  font-size: xx-large;
+}
